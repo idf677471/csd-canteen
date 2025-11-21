@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+<head>
+<title>Canteen Manager - Dark Mode</title>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<style>:root{--bg:#0d1117;--card:#161b22;--accent:#0ea5e9;--accent2:#38bdf8;--text:#e2e8f0;--text-dim:#94a3b8;--danger:#ef4444}body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:var(--text)}header{background:var(--card);color:var(--accent2);padding:18px;text-align:center;font-size:22px;font-weight:700;border-bottom:2px solid var(--accent2);text-shadow:0 0 5px var(--accent)}#main{display:flex;padding:10px;gap:15px}#cartSection,#productsSection{background:var(--card);padding:12px;flex:1;border-radius:12px;box-shadow:0 0 10px rgba(0,0,0,.5);overflow-y:auto;max-height:80vh}.item{padding:14px;background:#1f2733;border-radius:10px;margin-bottom:12px;box-shadow:0 0 8px rgba(0,0,0,.4);border:1px solid #2b3340}.price{color:var(--accent);font-weight:700}button{cursor:pointer;padding:8px 12px;border:none;border-radius:6px;background:var(--accent);color:#fff;font-weight:700;box-shadow:0 0 4px var(--accent);transition:.3s}button:hover{background:var(--accent2);box-shadow:0 0 8px var(--accent2)}button.red{background:var(--danger);box-shadow:0 0 4px #f55}input[type=number],input[type=text]{background:#11161d;color:#fff;border:1px solid #2b3340;border-radius:6px;padding:8px}.totalBox{background:#0a192f;padding:15px;border-radius:10px;margin:12px;font-size:20px;font-weight:700;border:1px solid var(--accent);color:var(--accent2);text-shadow:0 0 5px var(--accent)}#tabButtons{display:none}::-webkit-scrollbar{width:10px}::-webkit-scrollbar-track{background:#0b0f14;border-radius:10px}::-webkit-scrollbar-thumb{background:#0ea5e9;border-radius:10px}::-webkit-scrollbar-thumb:hover{background:#38bdf8;box-shadow:0 0 15px #38bdf8}@media (max-width:768px){#main{flex-direction:column}#tabButtons{display:flex;gap:10px;padding:10px}#tabButtons button{flex:1;background:var(--accent);font-size:19px;padding:12px;border-radius:10px;box-shadow:0 0 6px var(--accent)}#cartSection,#productsSection{display:none;max-height:none}#cartSection.active,#productsSection.active{display:block}}</style>
+</head>
+<body>
+<header>Canteen Manager</header>
+<div id=tabButtons>
+<button onclick='showTab("productsSection")'>Products</button>
+<button onclick='showTab("cartSection")'>Cart</button>
+</div>
+<div id=main>
+<div id=productsSection>
+<input id=search placeholder="Search product..." style=width:95%;padding:10px;margin-bottom:15px>
+<div id=productList>Loading...</div>
+</div>
+<div id=cartSection>
+<h3>Cart Items</h3>
+<div class=totalBox>Total: ₹<span id=total>0.00</span></div>
+<div id=cart></div>
+</div>
+</div>
+<script>let products=[],cart=[];function showTab(t){document.getElementById("productsSection").classList.remove("active"),document.getElementById("cartSection").classList.remove("active"),document.getElementById(t).classList.add("active")}async function loadProducts(){const t=await fetch("canteen.txt"),e=await t.text();products=parseProducts(e),displayProducts(products)}function parseProducts(t){return t.trim().split("\n").map((t=>{let e=t.split(" - "),n=e[0]?.trim(),c=e[1]?.trim();return{code:n,name:c,price:parseFloat(e[2]?.split("/")[0].trim())}}))}function displayProducts(t){const e=document.getElementById("productList");e.innerHTML="",t.forEach((t=>{let n=document.createElement("div");n.className="item",n.innerHTML=`\n      <b>${t.code}</b><br>${t.name}<br>\n      <span class="price">₹${t.price.toFixed(2)}</span><br><br>\n\n      Qty: <input type="number" id="qty_${t.code}" min="1" value="1">\n      <button onclick="addToCart('${t.code}')">Add</button>\n    `,e.appendChild(n)}))}function addToCart(t){let e=products.find((e=>e.code===t)),n=parseInt(document.getElementById("qty_"+t).value),c=cart.find((e=>e.code===t));c?c.qty+=n:cart.push({...e,qty:n}),updateCart(),window.innerWidth<768&&showTab("cartSection")}function updateCart(){let t=document.getElementById("cart");t.innerHTML="";let e=0;cart.forEach(((n,c)=>{e+=n.qty*n.price;let o=document.createElement("div");o.className="item",o.innerHTML=`\n      <b>${n.code}</b><br>${n.name}<br>\n      Price: ₹${n.price.toFixed(2)}<br><br>\n      Qty: <input type="number" min="1" value="${n.qty}"\n            onchange="updateQty(${c}, this.value)">\n      <button class="red" onclick="removeItem(${c})">Remove</button>\n      <br><br>\n      <b>Subtotal: ₹${(n.qty*n.price).toFixed(2)}</b>\n    `,t.appendChild(o)})),document.getElementById("total").innerText=e.toFixed(2)}function updateQty(t,e){cart[t].qty=parseInt(e),updateCart()}function removeItem(t){cart.splice(t,1),updateCart()}document.getElementById("search").addEventListener("input",(function(){let t=this.value.toLowerCase();displayProducts(products.filter((e=>e.code.toLowerCase().includes(t)||e.name.toLowerCase().includes(t))))})),loadProducts(),window.innerWidth<768&&showTab("productsSection")</script>
+</body>
+</html>
