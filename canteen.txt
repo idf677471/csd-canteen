@@ -144,6 +144,6 @@ Unknow - Khas Khas 100 GM - 154.00
 091312F - Revital H Woman Tablets - 256.87
 088057D - Refined Oil Sweekar 2 Li(liter) - 283.97
 004061D - Close Up Red Hot toothpaste 150 GM - 64.31
-086645A - Cates Soya Suace 200 GM - 26.97
 086646A - Cates Green Chilli Sauce - 26.97
+086645A - Cates Soya Suace 200 GM - 26.97
 085992A - Kwality Rich & Real Tomato Soup - 32.60
